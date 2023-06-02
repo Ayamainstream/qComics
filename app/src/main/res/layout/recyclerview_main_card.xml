@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="8dp"
+    android:orientation="vertical">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/cover"
+        android:layout_width="106dp"
+        android:layout_height="156dp"
+        android:src="@drawable/sample_4"
+        app:riv_corner_radius="4dp" />
+
+    <TextView
+        android:id="@+id/type_of_comics"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="3dp"
+        android:text="СТУДИЙНЫЙ"
+        android:textColor="@color/light_gray"
+        android:textSize="8sp"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/name_of_comics"
+        android:layout_width="106dp"
+        android:layout_height="wrap_content"
+        android:text="Еркетай"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        android:maxLines="1"
+        android:singleLine="true"
+        android:ellipsize="end"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_baseline_star_24" />
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="3dp"
+            android:text="4.9"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            tools:ignore="SmallSp" />
+
+        <TextView
+            android:id="@+id/votes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="3dp"
+            android:text="(0)"
+            android:textColor="@color/black"
+            android:textSize="10sp"
+            tools:ignore="SmallSp" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

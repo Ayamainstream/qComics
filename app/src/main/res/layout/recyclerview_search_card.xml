@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal"
+    android:layout_margin="4dp"
+    android:orientation="horizontal">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/cover"
+        android:layout_width="60dp"
+        android:layout_height="80dp"
+        android:src="@drawable/sample_8"
+        app:riv_corner_radius="4dp" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical">
+
+        <TextView
+            android:id="@+id/name_of_comics"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="Еркетай"
+            android:textColor="@color/black"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/type_of_comics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_of_comics"
+            android:layout_marginTop="3dp"
+            android:text="Khan comics"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"
+            tools:ignore="SmallSp" />
+
+        <TextView
+            android:id="@+id/divider"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_of_comics"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@id/type_of_comics"
+            android:text=" | " />
+
+        <TextView
+            android:id="@+id/genre_of_comics"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_of_comics"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@id/divider"
+            android:text="Для детей"
+            android:textColor="@color/light_gray"
+            android:textSize="12sp"
+            tools:ignore="SmallSp" />
+
+        <TextView
+            android:id="@+id/divider2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_of_comics"
+            android:layout_marginTop="3dp"
+            android:layout_toRightOf="@id/genre_of_comics"
+            android:text=" | " />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/name_of_comics"
+            android:layout_marginTop="3dp"
+            android:layout_toEndOf="@id/divider2"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:src="@drawable/ic_baseline_star_24" />
+
+            <TextView
+                android:id="@+id/rating"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="3dp"
+                android:text="4.9"
+                android:textColor="@color/black"
+                android:textSize="10sp"
+                android:textStyle="bold"
+                tools:ignore="SmallSp" />
+
+            <TextView
+                android:id="@+id/votes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginStart="3dp"
+                android:text="(0)"
+                android:textColor="@color/black"
+                android:textSize="10sp"
+                tools:ignore="SmallSp" />
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</LinearLayout>

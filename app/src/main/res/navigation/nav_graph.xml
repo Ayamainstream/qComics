@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/LoginFragment">
+
+    <fragment
+        android:id="@+id/LoginFragment"
+        android:name="com.example.qComics.ui.auth.LoginFragment"
+        android:label="LoginFragment"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_LoginFragment_to_registrationFragment"
+            app:destination="@id/RegistrationFragment" />
+        <action
+            android:id="@+id/action_LoginFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/RegistrationFragment"
+        android:name="com.example.qComics.ui.auth.RegistrationFragment"
+        android:label="RegistrationFragment"
+        tools:layout="@layout/fragment_registration">
+        <action
+            android:id="@+id/action_RegistrationFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment" />
+        <action
+            android:id="@+id/action_RegistrationFragment_to_verificationFragment"
+            app:destination="@id/verificationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/verificationFragment"
+        android:name="com.example.qComics.ui.auth.VerificationFragment"
+        android:label="VerificationFragment"
+        tools:layout="@layout/fragment_verification">
+        <action
+            android:id="@+id/action_verificationFragment_to_RegistrationFragment"
+            app:destination="@id/RegistrationFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordFragment"
+        android:name="com.example.qComics.ui.auth.ForgotPasswordFragment"
+        android:label="ForgotPasswordFragment"
+        tools:layout="@layout/fragment_forgot_password">
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_LoginFragment"
+            app:destination="@id/LoginFragment" />
+        <action
+            android:id="@+id/action_forgotPasswordFragment_to_forgotPasswordCodeFragment"
+            app:destination="@id/forgotPasswordCodeFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/forgotPasswordCodeFragment"
+        android:name="com.example.qComics.ui.auth.ForgotPasswordCodeFragment"
+        android:label="ForgotPasswordCodeFragment"
+        tools:layout="@layout/fragment_forgot_password_code">
+        <action
+            android:id="@+id/action_forgotPasswordCodeFragment_to_forgotPasswordFragment"
+            app:destination="@id/forgotPasswordFragment" />
+        <action
+            android:id="@+id/action_forgotPasswordCodeFragment_to_resetPasswordFragment"
+            app:destination="@id/resetPasswordFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetPasswordFragment"
+        android:name="com.example.qComics.ui.auth.ResetPasswordFragment"
+        android:label="ResetPasswordFragment"
+        tools:layout="@layout/fragment_reset_password">
+        <action
+            android:id="@+id/action_resetPasswordFragment_to_forgotPasswordCodeFragment"
+            app:destination="@id/forgotPasswordCodeFragment" />
+    </fragment>
+</navigation>
