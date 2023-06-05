@@ -4,6 +4,9 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.FragmentManager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,6 +19,8 @@ import com.example.qComics.ui.main.home.HomeFragment;
 import com.example.qComics.ui.main.user.UserFragment;
 import com.example.q_comics.R;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

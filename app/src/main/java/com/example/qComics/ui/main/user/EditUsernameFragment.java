@@ -109,6 +109,9 @@ public class EditUsernameFragment extends Fragment {
                         public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                             if (response.isSuccessful()) {
                                 Toast.makeText(getContext(),"Update was successful!", Toast.LENGTH_SHORT).show();
+                                SharedPreferences.Editor editor = prefs.edit();
+                                editor.putString("userName",user.getUsername());
+                                editor.apply();
                                 requireActivity().onBackPressed();
                             } else
                                 Toast.makeText(getContext(),"Please check if everything is correct!", Toast.LENGTH_SHORT).show();

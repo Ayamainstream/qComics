@@ -2,6 +2,8 @@ package com.example.qComics.ui.main.adapters;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.qComics.data.utils.Utils.getString;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -26,6 +28,7 @@ import com.example.qComics.ui.main.comics.ComicItemFragment;
 import com.example.q_comics.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -99,15 +102,49 @@ public class TopComicsAdapter extends RecyclerView.Adapter<TopComicsAdapter.View
             cover.setImageBitmap(bitmap);
             tvNameOfComics.setText(data.getName());
             tvRating.setText(String.valueOf(data.getRating()));
-            String commaSeparatedGenres = TextUtils.join(", ", data.getGenres());
+            List<String> genres = data.getGenres();
+            List<String> genreNames = new ArrayList<>();
+            for (String genre : genres) {
+                String genreName = getStringFromGenreName(genre);
+                genreNames.add(genreName);
+            }
+            String commaSeparatedGenres = TextUtils.join(", ", genreNames);
             tvGenreOfComics.setText(commaSeparatedGenres);
             tvPlace.setText(String.valueOf(position + 1));
-            tvVotes.setText("("+String.valueOf(data.getVotes())+")");
+            if (data.getVotes() == null)
+                tvVotes.setText("(0)");
+            else
+                tvVotes.setText("("+String.valueOf(data.getVotes())+")");
             if (position == 0){
                 tvPlace.setGravity(Gravity.CENTER);
                 tvPlace.setBackground(context.getDrawable(R.drawable.bg_baseline_star_24));
                 tvPlace.setTextColor(Color.WHITE);
             }
+        }
+    }
+
+    private String getStringFromGenreName(String genreName) {
+        switch (genreName) {
+            case "CHILDREN":
+                return getString(R.string.genre_name_children, context);
+            case "FANTASTIC":
+                return getString(R.string.genre_name_fantastic, context);
+            case "HISTORICAL":
+                return getString(R.string.genre_name_historical, context);
+            case "ROMANTIC":
+                return getString(R.string.genre_name_romantic, context);
+            case "DRAMA":
+                return getString(R.string.genre_name_drama, context);
+            case "ADVENTURES":
+                return getString(R.string.genre_name_adventures, context);
+            case "ACTION":
+                return getString(R.string.genre_name_action, context);
+            case "DAILY":
+                return getString(R.string.genre_name_daily, context);
+            case "COMEDY":
+                return getString(R.string.genre_name_comedy, context);
+            default:
+                return genreName;
         }
     }
 }

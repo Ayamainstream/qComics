@@ -94,7 +94,10 @@ public class NewComicsAdapter extends RecyclerView.Adapter<NewComicsAdapter.View
             tvNameOfComics.setText(data.getName());
             tvDescriptionOfComics.setText(data.getDescription());
             tvRating.setText(String.valueOf(data.getRating()));
-            tvVotes.setText("("+String.valueOf(data.getVotes())+")");
+            if (data.getVotes() == null)
+                tvVotes.setText("(0)");
+            else
+                tvVotes.setText("("+String.valueOf(data.getVotes())+")");
         }
     }
 }

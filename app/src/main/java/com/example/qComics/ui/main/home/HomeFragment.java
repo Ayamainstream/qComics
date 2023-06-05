@@ -37,6 +37,7 @@ import com.example.q_comics.R;
 import com.example.q_comics.databinding.FragmentHomeBinding;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import retrofit2.Call;
@@ -52,7 +53,6 @@ public class HomeFragment extends Fragment {
     private RecyclerView rvRecentUpdates, rvNews, rvTops;
     private TextView user;
     private ImageView userIcon, searchBtn;
-    private SharedPreferences prefs;
     private final Handler sliderHandler = new Handler();
 
     @Override
@@ -82,7 +82,7 @@ public class HomeFragment extends Fragment {
     }
 
     private void setUserName() {
-        prefs = requireActivity().getSharedPreferences("DeviceToken", MODE_PRIVATE);
+        SharedPreferences prefs = requireActivity().getSharedPreferences("DeviceToken", MODE_PRIVATE);
         String username = prefs.getString("userName", null);
         String password = prefs.getString("password", null);
 
@@ -90,14 +90,6 @@ public class HomeFragment extends Fragment {
             user.setText(username);
             userIcon.setVisibility(View.VISIBLE);
 
-            //temporary logout
-            user.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    logout();
-                    startActivity(new Intent(getActivity(), AuthenticationActivity.class));
-                }
-            });
         } else {
             user.setText(R.string.login_or_register);
             userIcon.setVisibility(View.GONE);
@@ -110,14 +102,6 @@ public class HomeFragment extends Fragment {
                 }
             });
         }
-    }
-
-    private void logout() {
-        prefs = requireActivity().getSharedPreferences("DeviceToken", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.remove("username");
-        editor.remove("password");
-        editor.apply();
     }
 
     private void setMarginLeft(TextView textView) {
@@ -138,12 +122,16 @@ public class HomeFragment extends Fragment {
         getAllComics.enqueue(new Callback<ArrayList<Comics>>() {
             @Override
             public void onResponse(Call<ArrayList<Comics>> call, Response<ArrayList<Comics>> response) {
-                mainComicsAdapter.setData(response.body());
+                if (response.isSuccessful()) {
+                    ArrayList<Comics> comicsList = response.body();
+                    Collections.reverse(comicsList);
+                    mainComicsAdapter.setData(comicsList);
+                }
             }
 
             @Override
             public void onFailure(Call<ArrayList<Comics>> call, Throwable t) {
-                Log.e("ASD","inside failure "+ t.getLocalizedMessage());
+                Log.e("ASD", "inside failure " + t.getLocalizedMessage());
             }
         });
 

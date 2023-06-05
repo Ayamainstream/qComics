@@ -49,6 +49,8 @@ public class UserFragment extends Fragment {
     RecyclerView rvFavorites, rvSubscriptions, rvDownloads;
     String userName, password;
     AppCompatButton loginBtn;
+    FavoriteAdapter favoriteAdapter;
+    SubscriptionsAdapter subscriptionsAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,7 +91,11 @@ public class UserFragment extends Fragment {
                 tvFavoriteComics.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 tvDownloadComics.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 rvFavorites.setVisibility(View.GONE);
-                rvSubscriptions.setVisibility(View.VISIBLE);
+                tvNoFavorites.setVisibility(View.GONE);
+                if (subscriptionsAdapter.getItemCount() == 0)
+                    tvNoSubscriptions.setVisibility(View.VISIBLE);
+                else
+                    rvSubscriptions.setVisibility(View.VISIBLE);
             }
         });
         tvFavoriteComics.setOnClickListener(new View.OnClickListener() {
@@ -99,31 +105,47 @@ public class UserFragment extends Fragment {
                 tvFavoriteComics.setTextColor(ContextCompat.getColor(getContext(), R.color.orange_text));
                 tvDownloadComics.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
                 rvSubscriptions.setVisibility(View.GONE);
-                rvFavorites.setVisibility(View.VISIBLE);
+                tvNoSubscriptions.setVisibility(View.GONE);
+                if (favoriteAdapter.getItemCount() == 0)
+                    tvNoFavorites.setVisibility(View.VISIBLE);
+                else
+                    rvFavorites.setVisibility(View.VISIBLE);
             }
         });
         tvDownloadComics.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tvSubscriptions.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
-                tvFavoriteComics.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
-                tvDownloadComics.setTextColor(ContextCompat.getColor(getContext(), R.color.orange_text));
+//                tvSubscriptions.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+//                tvFavoriteComics.setTextColor(ContextCompat.getColor(getContext(), R.color.black));
+//                tvDownloadComics.setTextColor(ContextCompat.getColor(getContext(), R.color.orange_text));
+            }
+        });
+        settingsBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BaseActivity)requireActivity()).addFragment(new SettingsFragment());
             }
         });
         setRecyclerViews();
         setUser();
+
         return binding.getRoot();
     }
 
     private void setRecyclerViews() {
-        FavoriteAdapter favoriteAdapter = new FavoriteAdapter(requireContext());
-        SubscriptionsAdapter subscriptionsAdapter = new SubscriptionsAdapter(requireContext());
+        favoriteAdapter = new FavoriteAdapter(requireContext());
+        subscriptionsAdapter = new SubscriptionsAdapter(requireContext());
 
         Call<ArrayList<Comics>> getFavorites = ApiClient.getUserService().getFavorites(userName);
         getFavorites.enqueue(new Callback<ArrayList<Comics>>() {
             @Override
             public void onResponse(Call<ArrayList<Comics>> call, Response<ArrayList<Comics>> response) {
                 favoriteAdapter.setData(response.body());
+                if (favoriteAdapter.getItemCount() == 0) {
+                    tvNoFavorites.setVisibility(View.VISIBLE);
+                }
+                else
+                    rvFavorites.setVisibility(View.VISIBLE);
             }
 
             @Override
@@ -160,7 +182,6 @@ public class UserFragment extends Fragment {
         if (userName != null && password != null) {
             tvUsername.setText(userName);
             llNotLoggedIn.setVisibility(View.GONE);
-            rvFavorites.setVisibility(View.VISIBLE);
             tvFavoriteComics.setTextColor(ContextCompat.getColor(getContext(), R.color.orange_text));
             tvUsername.setOnClickListener(new View.OnClickListener() {
                 @Override

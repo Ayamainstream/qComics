@@ -27,7 +27,7 @@
         app:riv_corner_radius="4dp" />
 
     <RelativeLayout
-        android:layout_width="210dp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_margin="16dp">
 
@@ -50,15 +50,18 @@
             android:layout_marginTop="3dp"
             android:layout_below="@id/name_of_comics"
             android:text="Для детей"
+            android:layout_alignParentStart="true"
+            android:layout_toStartOf="@id/ll_rating"
             android:textColor="@color/light_gray"
             android:textSize="12sp"
             tools:ignore="SmallSp" />
 
         <LinearLayout
+            android:id="@+id/ll_rating"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignTop="@id/genre_of_comics"
             android:orientation="horizontal">
 
             <ImageView

@@ -23,6 +23,7 @@ import com.example.qComics.data.network.auth.User;
 import com.example.qComics.data.network.comics.Comics;
 import com.example.qComics.ui.base.BaseActivity;
 import com.example.qComics.ui.main.comics.ComicItemFragment;
+import com.example.qComics.ui.main.user.AuthorsProfileFragment;
 import com.example.q_comics.R;
 
 import java.util.ArrayList;
@@ -57,9 +58,9 @@ public class SubscriptionsAdapter extends RecyclerView.Adapter<SubscriptionsAdap
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = context.getSharedPreferences("DeviceToken", MODE_PRIVATE).edit();
-                editor.putString("subscriberName", dataModel.get(position).getUsername()); // or add toString() after if needed
+                editor.putString("authorName", dataModel.get(position).getUsername()); // or add toString() after if needed
                 editor.apply();
-                ((BaseActivity) context).addFragment(new ComicItemFragment());
+                ((BaseActivity) context).addFragment(new AuthorsProfileFragment());
             }
         });
     }

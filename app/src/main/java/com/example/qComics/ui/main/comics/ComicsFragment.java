@@ -57,7 +57,7 @@ public class ComicsFragment extends Fragment {
     RecyclerView rvStudioComics, rvAuthorsComics;
     MainComicsAdapter mainComicsAdapterStudio, mainComicsAdapterAuthor;
     ArrayList<Comics> tempComicsStudio, tempComicsAuthor;
-    Boolean onStudio = false;
+    Boolean onStudio = Boolean.TRUE;
 
     private List<String> itemList, sortOptions;
     private ArrayAdapter<String> adapterFilter, adapterSort;
@@ -93,14 +93,14 @@ public class ComicsFragment extends Fragment {
                     rvStudioComics.setVisibility(View.GONE);
                     rvAuthorsComics.setVisibility(View.VISIBLE);
                     tvSwitchAuthors.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
-                    tvNumberOfComics.setText(mainComicsAdapterAuthor.getItemCount() + " комиксов");
+                    tvNumberOfComics.setText(mainComicsAdapterAuthor.getItemCount() + " " + getString(R.string.comics_one));
                 } else {
                     onStudio = true;
                     tvSwitchStudio.setTextColor(ContextCompat.getColor(getContext(), R.color.white));
                     rvAuthorsComics.setVisibility(View.GONE);
                     rvStudioComics.setVisibility(View.VISIBLE);
                     tvSwitchAuthors.setTextColor(ContextCompat.getColor(getContext(), R.color.orange_text));
-                    tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " комиксов");
+                    tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " " + getString(R.string.comics_one));
                 }
             }
         });
@@ -126,41 +126,45 @@ public class ComicsFragment extends Fragment {
         Map mapRating = new Map();
         mapRating.setPage(0);
         mapRating.setSize(100);
-        mapRating.setSort("publishedDate");
-        Call<ArrayList<Comics>> studioComics = ApiClient.getUserService().mapComics(studioType, mapRating);
+        Call<ArrayList<Comics>> studioComics = ApiClient.getUserService().mapComicsType(studioType, mapRating);
         studioComics.enqueue(new Callback<ArrayList<Comics>>() {
             @Override
             public void onResponse(Call<ArrayList<Comics>> call, Response<ArrayList<Comics>> response) {
-                assert response.body() != null;
-                mainComicsAdapterStudio.setData(response.body());
-                Log.e("ASD", "Studio Comics: "+response.body());
-                tempComicsStudio.addAll(response.body());
-                tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " комиксов");
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    mainComicsAdapterStudio.setData(response.body());
+                    Log.e("ASD", "Studio Comics: " + response.body());
+                    tempComicsStudio.addAll(response.body());
+                    tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " " + getString(R.string.comics_one));
+                }
             }
 
             @Override
             public void onFailure(Call<ArrayList<Comics>> call, Throwable t) {
-                Log.e("ASD","Inside failure "+ t.getLocalizedMessage()+" "+t.getMessage());
+                Log.e("ASD", "Inside failure " + t.getLocalizedMessage() + " " + t.getMessage());
             }
         });
         RequestType authorType = new RequestType();
         authorType.setType("AUTHOR");
-        Call<ArrayList<Comics>> authorComics = ApiClient.getUserService().mapComics(authorType, mapRating);
+        Call<ArrayList<Comics>> authorComics = ApiClient.getUserService().mapComicsType(authorType, mapRating);
         authorComics.enqueue(new Callback<ArrayList<Comics>>() {
             @Override
             public void onResponse(Call<ArrayList<Comics>> call, Response<ArrayList<Comics>> response) {
-                mainComicsAdapterAuthor.setData(response.body());
-                tempComicsAuthor.addAll(response.body());
+                if (response.isSuccessful()) {
+                    assert response.body() != null;
+                    mainComicsAdapterAuthor.setData(response.body());
+                    tempComicsAuthor.addAll(response.body());
+                }
             }
 
             @Override
             public void onFailure(Call<ArrayList<Comics>> call, Throwable t) {
-                Log.e("ASD","Inside failure "+ t.getLocalizedMessage()+" "+t.getMessage());
+                Log.e("ASD", "Inside failure " + t.getLocalizedMessage() + " " + t.getMessage());
             }
         });
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " комиксов");
+        tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " " + getString(R.string.comics_one));
 
         rvStudioComics.setLayoutManager(layoutManager);
         rvStudioComics.setAdapter(mainComicsAdapterStudio);
@@ -172,20 +176,21 @@ public class ComicsFragment extends Fragment {
 
     private void setDropdown() {
         itemList = new ArrayList<>(Arrays.asList(
-                "CHILDREN",
-                "FANTASTIC",
-                "HISTORICAL",
-                "ROMANTIC",
-                "DRAMA",
-                "ADVENTURES",
-                "ACTION",
-                "DAILY",
-                "COMEDY"
+                getString(R.string.genre_name_children),
+                getString(R.string.genre_name_fantastic),
+                getString(R.string.genre_name_historical),
+                getString(R.string.genre_name_romantic),
+                getString(R.string.genre_name_drama),
+                getString(R.string.genre_name_adventures),
+                getString(R.string.genre_name_action),
+                getString(R.string.genre_name_daily),
+                getString(R.string.genre_name_comedy)
         ));
 
         sortOptions = new ArrayList<>();
-        sortOptions.add("По высокому рейтингу");
-        sortOptions.add("По новизне");
+        sortOptions.add(getString(R.string.default_string));
+        sortOptions.add(getString(R.string.sort_option_high_rating));
+        sortOptions.add(getString(R.string.sort_option_new));
 
         adapterFilter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, itemList);
         filterDropdown.setAdapter(adapterFilter);
@@ -220,7 +225,8 @@ public class ComicsFragment extends Fragment {
                 tv.setGravity(Gravity.CENTER_VERTICAL);
                 tv.setTextColor(Color.parseColor("#FFFFFFFF"));
                 tv.setBackground(getResources().getDrawable(R.drawable.bg_genre_item));
-                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                        LinearLayout.LayoutParams.WRAP_CONTENT);
                 layoutParams.setMargins(10, 2, 2, 2);
                 tv.setLayoutParams(layoutParams);
                 tv.setPadding(35, 5, 5, 5);
@@ -249,12 +255,15 @@ public class ComicsFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String selectedSortOption = (String) parent.getItemAtPosition(position);
-                if (selectedSortOption.equals("По высокому рейтингу")){
+                if (selectedSortOption.equals(getString(R.string.sort_option_high_rating))) {
                     sortComicsByRating(mainComicsAdapterStudio.getData());
                     sortComicsByRating(mainComicsAdapterAuthor.getData());
-                } else if (selectedSortOption.equals("По популярности")){
+                } else if (selectedSortOption.equals(getString(R.string.sort_option_new))) {
                     sortComicsByPublishedDate(mainComicsAdapterStudio.getData());
                     sortComicsByPublishedDate(mainComicsAdapterAuthor.getData());
+                } else if (selectedSortOption.equals(getString(R.string.default_string))) {
+                    mainComicsAdapterStudio.setData(tempComicsStudio);
+                    mainComicsAdapterAuthor.setData(tempComicsAuthor);
                 }
                 mainComicsAdapterAuthor.notifyDataSetChanged();
                 mainComicsAdapterStudio.notifyDataSetChanged();
@@ -266,58 +275,86 @@ public class ComicsFragment extends Fragment {
     }
 
     private void filterComics() {
-        ArrayList<Comics> filteredComics1 = new ArrayList<>();
-        ArrayList<Comics> filteredComics2 = new ArrayList<>();
-        Log.e("filter", selectedGenres.toString());
+        ArrayList<Comics> filteredComicsStudio = new ArrayList<>();
+        ArrayList<Comics> filteredComicsAuthors = new ArrayList<>();
+
         if (selectedGenres.isEmpty()) {
             // No genres selected, show all comics
             mainComicsAdapterStudio.setData(tempComicsStudio);
             mainComicsAdapterAuthor.setData(tempComicsAuthor);
             if (onStudio)
-                tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " комиксов");
+                tvNumberOfComics.setText(mainComicsAdapterStudio.getItemCount() + " " + getString(R.string.comics));
             else
-                tvNumberOfComics.setText(mainComicsAdapterAuthor.getItemCount() + " комиксов");
+                tvNumberOfComics.setText(mainComicsAdapterAuthor.getItemCount() + " " + getString(R.string.comics));
         } else {
             Log.e("else", selectedGenres.toString());
             // Filter comics based on selected genres
             for (Comics comic : tempComicsStudio) {
                 boolean shouldAdd = true;
                 for (String selectedGenre : selectedGenres) {
-                    if (!comic.getGenres().contains(selectedGenre)) {
+                    if (!comic.getGenres().contains(getStringFromGenreName(selectedGenre))) {
                         shouldAdd = false;
                         break;
                     }
                 }
                 if (shouldAdd) {
-                    filteredComics1.add(comic);
+                    filteredComicsStudio.add(comic);
                 }
             }
             for (Comics comic : tempComicsAuthor) {
                 boolean shouldAdd = true;
                 for (String selectedGenre : selectedGenres) {
-                    if (!comic.getGenres().contains(selectedGenre)) {
+                    if (!comic.getGenres().contains(getStringFromGenreName(selectedGenre))) {
                         shouldAdd = false;
                         break;
                     }
                 }
                 if (shouldAdd) {
-                    filteredComics2.add(comic);
+                    filteredComicsAuthors.add(comic);
                 }
             }
-            Log.e("ASD", "1 -----"+ filteredComics1);
-            Log.e("ASD", "2 -----"+ filteredComics2);
-            mainComicsAdapterStudio.setData(filteredComics1);
-            mainComicsAdapterAuthor.setData(filteredComics2);
-            Log.e("ASD", onStudio.toString());
+
+            mainComicsAdapterStudio.setData(filteredComicsStudio);
+            mainComicsAdapterAuthor.setData(filteredComicsAuthors);
         }
-        if (!filteredComics1.isEmpty() || !filteredComics2.isEmpty()) {
+        Log.e("ASD", onStudio.toString());
+
+        if (!filteredComicsStudio.isEmpty() || !filteredComicsAuthors.isEmpty()) {
             if (onStudio)
-                tvNumberOfComics.setText(filteredComics1.size() + " комиксов");
+                tvNumberOfComics.setText(filteredComicsStudio.size() + " " + getString(R.string.comics));
             else
-                tvNumberOfComics.setText(filteredComics2.size() + " комиксов");
+                tvNumberOfComics.setText(filteredComicsAuthors.size() + " " + getString(R.string.comics));
+        } else {
+            if (!selectedGenres.isEmpty())
+                tvNumberOfComics.setText("0" + " " + getString(R.string.comics_one));
         }
+
         mainComicsAdapterStudio.notifyDataSetChanged();
         mainComicsAdapterAuthor.notifyDataSetChanged();
+    }
+
+    private String getStringFromGenreName(String genreName) {
+        if (genreName.equals(getString(R.string.genre_name_children))) {
+            return "CHILDREN";
+        } else if (genreName.equals(getString(R.string.genre_name_fantastic))) {
+            return "FANTASTIC";
+        } else if (genreName.equals(getString(R.string.genre_name_historical))) {
+            return "HISTORICAL";
+        } else if (genreName.equals(getString(R.string.genre_name_romantic))) {
+            return "ROMANTIC";
+        } else if (genreName.equals(getString(R.string.genre_name_drama))) {
+            return "DRAMA";
+        } else if (genreName.equals(getString(R.string.genre_name_adventures))) {
+            return "ADVENTURES";
+        } else if (genreName.equals(getString(R.string.genre_name_action))) {
+            return "ACTION";
+        } else if (genreName.equals(getString(R.string.genre_name_daily))) {
+            return "DAILY";
+        } else if (genreName.equals(getString(R.string.genre_name_comedy))) {
+            return "COMEDY";
+        } else {
+            return genreName;
+        }
     }
 
     private void sortComicsByRating(ArrayList<Comics> comics) {

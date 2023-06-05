@@ -38,8 +38,8 @@
                 android:layout_height="30dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:padding="4dp"
                 android:layout_marginEnd="20dp"
+                android:padding="4dp"
                 android:src="@drawable/ic_baseline_search_24" />
 
         </RelativeLayout>
@@ -48,8 +48,7 @@
             android:layout_width="match_parent"
             android:layout_height="50dp"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/bg_switch">
+            android:layout_marginHorizontal="20dp">
 
             <androidx.appcompat.widget.SwitchCompat
                 android:id="@+id/switcher"
@@ -59,8 +58,9 @@
                 android:checked="false"
                 android:textColor="@color/white"
                 android:thumb="@drawable/thumb_selector"
-                app:switchMinWidth="140dp"
-                app:track="@drawable/track_selector" />
+                app:switchMinWidth="100dp"
+                app:track="@drawable/track_selector"
+                android:background="@drawable/bg_switch"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -106,15 +106,15 @@
 
             <AutoCompleteTextView
                 android:id="@+id/filter"
-                android:layout_width="130dp"
+                android:layout_width="180dp"
                 android:layout_height="wrap_content"
                 android:background="@drawable/bg_custom_dropdown"
                 android:drawableEnd="@drawable/ic_arrow_down"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
+                android:dropDownWidth="130dp"
                 android:dropDownHeight="300dp"
                 android:dropDownVerticalOffset="10dp"
-                android:dropDownWidth="130dp"
+                android:focusable="false"
+                android:focusableInTouchMode="false"
                 android:inputType="none"
                 android:padding="8dp"
                 android:paddingEnd="12dp"
@@ -125,38 +125,39 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:padding="8dp"
+                android:padding="6dp"
                 android:text="@string/genres"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
 
             <AutoCompleteTextView
                 android:id="@+id/sort"
-                android:layout_width="230dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/filter"
                 android:background="@drawable/bg_custom_dropdown"
                 android:drawableEnd="@drawable/ic_arrow_down"
-                android:layout_alignParentEnd="true"
+                android:dropDownWidth="230dp"
+                android:dropDownVerticalOffset="10dp"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:paddingStart="18dp"
-                android:textColorHint="@color/black"
                 android:inputType="none"
                 android:padding="8dp"
-                android:dropDownVerticalOffset="10dp"
-                android:dropDownWidth="230dp"
+                android:paddingStart="18dp"
                 android:paddingEnd="12dp"
                 android:textColor="@color/white"
+                android:textColorHint="@color/black"
                 android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/sort_preview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignStart="@id/sort"
                 android:layout_marginStart="10dp"
                 android:padding="8dp"
-                android:layout_alignStart="@id/sort"
-                android:text="@string/by_popularity"
+                android:text="@string/default_string"
                 android:textColor="@color/black"
                 android:textSize="16sp" />
         </RelativeLayout>

@@ -4,6 +4,7 @@ import static android.content.Context.MODE_PRIVATE;
 
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,12 +20,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.example.qComics.data.network.ApiClient;
+import com.example.qComics.data.network.comics.Chapter;
+import com.example.qComics.data.network.comics.Comics;
 import com.example.qComics.data.network.comics.Images;
 import com.example.qComics.data.utils.OnBackPressed;
+import com.example.qComics.ui.main.adapters.ChapterMenuAdapter;
 import com.example.qComics.ui.main.adapters.ImagesAdapter;
+import com.example.qComics.ui.main.adapters.SearchAdapter;
 import com.example.q_comics.R;
 import com.example.q_comics.databinding.FragmentReadingBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -48,6 +54,7 @@ public class ReadingFragment extends Fragment implements OnBackPressed {
     RecyclerView rvImages;
     FrameLayout containerLayout;
     BottomNavigationView navigationView;
+    PopupWindow popupWindow;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -58,7 +65,7 @@ public class ReadingFragment extends Fragment implements OnBackPressed {
         tvChaptersNumber = binding.chaptersNumber;
         sendBtn = binding.sendBtn;
         chaptersMenuBtn = binding.chaptersMenu;
-        moreBtn = binding.more;
+//        moreBtn = binding.more;
         commentBtn = binding.icComment;
         likeBtn = binding.icLike;
         nextChapterBtn = binding.nextChapter;
@@ -78,7 +85,19 @@ public class ReadingFragment extends Fragment implements OnBackPressed {
         containerLayout.setLayoutParams(layoutParams);
 
         bottomSheetInitialization();
+        initButtons();
 
+        initView();
+        return binding.getRoot();
+    }
+
+    private void initButtons() {
+        chaptersMenuBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setChapters();
+            }
+        });
         backBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,8 +111,49 @@ public class ReadingFragment extends Fragment implements OnBackPressed {
                 mViewBg.setVisibility(View.VISIBLE);
             }
         });
-        initView();
-        return binding.getRoot();
+        nextChapterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+    }
+
+    private void setChapters() {
+        Call<ArrayList<Chapter>> getChapter = ApiClient.getUserService().getChapters(comicsName);
+        getChapter.enqueue(new Callback<ArrayList<Chapter>>() {
+            @Override
+            public void onResponse(Call<ArrayList<Chapter>> call, Response<ArrayList<Chapter>> response) {
+                if (response.isSuccessful())
+                    showChapterMenuDialog(response.body());
+            }
+
+            @Override
+            public void onFailure(Call<ArrayList<Chapter>> call, Throwable t) {
+                Log.e("ASD", "inside failure " + t.getLocalizedMessage());
+            }
+        });
+    }
+
+    private void showChapterMenuDialog(ArrayList<Chapter> chapters) {
+        View dialogView = getLayoutInflater().inflate(R.layout.dialog_searchible_spinner, null);
+        popupWindow = new PopupWindow(dialogView, ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        ChapterMenuAdapter chapterMenuAdapter = new ChapterMenuAdapter(requireActivity(), popupWindow);
+        chapterMenuAdapter.setData(chapters);
+
+        // Set up the RecyclerView and its layout manager
+        RecyclerView rvChapterMenu = dialogView.findViewById(R.id.rv_search_result);
+        rvChapterMenu.setLayoutManager(new LinearLayoutManager(getContext()));
+        rvChapterMenu.setAdapter(chapterMenuAdapter);
+
+        // Create and show the popup window
+        popupWindow.setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        popupWindow.setOutsideTouchable(true);
+
+        // Calculate the x and y offsets for the popup window
+        int[] location = new int[2];
+        chaptersMenuBtn.getLocationInWindow(location);
+        popupWindow.showAsDropDown(chaptersMenuBtn, 0, 0);
     }
 
     private void bottomSheetInitialization() {

@@ -9,8 +9,8 @@
 
     <com.makeramen.roundedimageview.RoundedImageView
         android:id="@+id/cover"
-        android:layout_width="106dp"
-        android:layout_height="156dp"
+        android:layout_width="96dp"
+        android:layout_height="146dp"
         android:src="@drawable/sample_4"
         app:riv_corner_radius="4dp" />
 
@@ -26,7 +26,7 @@
 
     <TextView
         android:id="@+id/name_of_comics"
-        android:layout_width="106dp"
+        android:layout_width="96dp"
         android:layout_height="wrap_content"
         android:text="Еркетай"
         android:textColor="@color/black"

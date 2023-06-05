@@ -117,14 +117,14 @@
             style="@style/miniText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Нет аккаунта?"
+            android:text="@string/no_account"
             android:textColor="@color/black" />
 
         <TextView
             style="@style/miniText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text=" Зарегистрироваться"
+            android:text="@string/create_account"
             android:textColor="@color/orange_text" />
 
     </LinearLayout>

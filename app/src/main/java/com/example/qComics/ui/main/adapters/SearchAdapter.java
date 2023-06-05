@@ -2,12 +2,15 @@ package com.example.qComics.ui.main.adapters;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.qComics.data.utils.Utils.getString;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.text.TextUtils;
 import android.util.Base64;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,6 +29,7 @@ import com.example.qComics.ui.main.comics.ComicItemFragment;
 import com.example.q_comics.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -102,7 +106,38 @@ public class SearchAdapter extends RecyclerView.Adapter<SearchAdapter.ViewHolder
             tvNameOfComics.setText(data.getName());
             tvRating.setText(String.valueOf(data.getRating()));
             tvTypeOfComics.setText(String.valueOf(data.getType()));
-            tvGenreOfComics.setText(data.getGenres().get(0));
+            List<String> genres = data.getGenres();
+            List<String> genreNames = new ArrayList<>();
+            for (String genre : genres) {
+                String genreName = getStringFromGenreName(genre);
+                genreNames.add(genreName);
+            }
+            tvGenreOfComics.setText(genreNames.get(0));
+        }
+    }
+
+    private String getStringFromGenreName(String genreName) {
+        switch (genreName) {
+            case "CHILDREN":
+                return getString(R.string.genre_name_children, context);
+            case "FANTASTIC":
+                return getString(R.string.genre_name_fantastic, context);
+            case "HISTORICAL":
+                return getString(R.string.genre_name_historical, context);
+            case "ROMANTIC":
+                return getString(R.string.genre_name_romantic, context);
+            case "DRAMA":
+                return getString(R.string.genre_name_drama, context);
+            case "ADVENTURES":
+                return getString(R.string.genre_name_adventures, context);
+            case "ACTION":
+                return getString(R.string.genre_name_action, context);
+            case "DAILY":
+                return getString(R.string.genre_name_daily, context);
+            case "COMEDY":
+                return getString(R.string.genre_name_comedy, context);
+            default:
+                return genreName;
         }
     }
 

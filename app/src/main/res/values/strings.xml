@@ -51,7 +51,7 @@
     <string name="subscribed">Подписки</string>
     <string name="downloaded">Скаченные</string>
     <string name="drama">Драма</string>
-    <string name="rate">оценить</string>
+    <string name="rate">Оценить</string>
     <string name="download">Скачать</string>
     <string name="choose_all_comics">Выбрать все главы</string>
     <string name="plot">Сюжет</string>
@@ -76,4 +76,28 @@
     <string name="add_favourite_authors">Следите за любимыми авторами</string>
     <string name="download_comics">Нет загрузок</string>
     <string name="coin">монеты</string>
+    <string name="language">Язык</string>
+    <string name="kazakh">Казахский</string>
+    <string name="feedback">Обратная связь</string>
+    <string name="logout">Выйти</string>
+    <string name="russian">Русский</string>
+    <string name="english">Английский</string>
+    <string name="no_account">Нет аккаунта? </string>
+    <string name="create_account">Зарегесртироваться</string>
+    <string name="comics_one">комикс</string>
+    <string name="genre_name_children">Детские</string>
+    <string name="genre_name_fantastic">Фантастика</string>
+    <string name="genre_name_historical">Исторические</string>
+    <string name="genre_name_romantic">Романтика</string>
+    <string name="genre_name_drama">Драма</string>
+    <string name="genre_name_adventures">Приключения</string>
+    <string name="genre_name_action">Экшн</string>
+    <string name="genre_name_daily">Повседневность</string>
+    <string name="genre_name_comedy">Комедия</string>
+    <string name="sort_option_high_rating">По рейтингу</string>
+    <string name="sort_option_new">По новизне</string>
+    <string name="default_string">По умолчанию</string>
+    <string name="cancel">Отмена</string>
+    <string name="date_hardcode">Июнь 5, 2023</string>
+    <string name="downloading">Загрузка</string>
 </resources>

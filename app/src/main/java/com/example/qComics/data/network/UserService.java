@@ -3,7 +3,6 @@ package com.example.qComics.data.network;
 import com.example.qComics.data.network.auth.LoginRequest;
 import com.example.qComics.data.network.auth.LoginResponse;
 import com.example.qComics.data.network.auth.RegisterRequest;
-import com.example.qComics.data.network.auth.RegisterResponse;
 import com.example.qComics.data.network.auth.User;
 import com.example.qComics.data.network.auth.Validate;
 import com.example.qComics.data.network.comics.Chapter;
@@ -12,18 +11,20 @@ import com.example.qComics.data.network.comics.Comics;
 import com.example.qComics.data.network.comics.Filter;
 import com.example.qComics.data.network.comics.Images;
 import com.example.qComics.data.network.comics.Map;
+import com.example.qComics.data.network.comics.Rating;
+import com.example.qComics.data.network.comics.RequestAuthor;
 import com.example.qComics.data.network.comics.RequestChapterStatus;
 import com.example.qComics.data.network.comics.RequestType;
 import com.example.qComics.data.network.comics.SaveRequest;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
 import retrofit2.http.Path;
 import retrofit2.http.Query;
 
@@ -51,7 +52,7 @@ public interface UserService {
     Call<String> subscribe(@Query("subscriberUsername") String subscriberUsername,
                            @Query("userToSubscribeUsername") String userToSubscribeUsername);
 
-    @POST("/api/v1/users/update")
+    @POST("/api/v1/users/update-by-username")
     Call<ResponseBody> updateUser(@Body User user);
 
     @GET("api/v1/comics/all")
@@ -64,7 +65,11 @@ public interface UserService {
     Call<ArrayList<Comics>> filteredComics(@Body Filter filteredRequest);
 
     @POST("/api/v1/comics/findAll/map")
-    Call<ArrayList<Comics>> mapComics(@Body RequestType requestType,
+    Call<ArrayList<Comics>> mapComicsType(@Body RequestType requestType,
+                                      @Query("pageable") Map map);
+
+    @POST("/api/v1/comics/findAll/map")
+    Call<ArrayList<Comics>> mapComicsAuthor(@Body RequestAuthor requestAuthor,
                                       @Query("pageable") Map map);
 
     @POST("/api/v1/bookmarks/add")
@@ -84,10 +89,24 @@ public interface UserService {
     Call<ArrayList<Images>> getImages(@Query("chapterName") String chapterName,
                                       @Query("comicName") String comicName);
 
+    @GET("/api/v1/rates/save")
+    Call<Rating> getRating(@Query("comicName") String comicName,
+                           @Query("username") String username);
+
+    @POST("/api/v1/rates/save")
+    Call<Rating> setRating(@Body Rating rating);
+
+    @PUT("/api/v1/rates/save")
+    Call<Rating> updateRating(@Body Rating rating);
+
     @GET("/api/v1/reading-status")
     Call<ChapterStatus> getChapterStatus(@Query("username") String username,
                                          @Query("chapterId") Integer chapterId);
 
     @POST("/api/v1/reading-status/read")
     Call<ResponseBody> makeRead(@Body RequestChapterStatus requestChapterStatus);
+
+    @GET("/api/v1/images/download/{chapterName}/{comicName}")
+    Call<ResponseBody> downloadChapter(@Path("chapterName") String chapterName,
+                                       @Path("comicName") String comicName);
 }

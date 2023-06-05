@@ -85,7 +85,8 @@ public class SearchFragment extends Fragment {
         searchBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                search();
+                if (!searchView.getText().toString().isEmpty())
+                    search();
             }
         });
 
@@ -128,6 +129,7 @@ public class SearchFragment extends Fragment {
     private void search() {
         mainComicsAdapter.setData(mainComicsAdapter.getSearchResults(String.valueOf(searchView.getText())));
         mainComicsAdapter.notifyDataSetChanged();
+        tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " " + getString(R.string.comics_one));
     }
 
     private void showSearchResultsDialog(ArrayList<Comics> searchResults) {
@@ -159,10 +161,11 @@ public class SearchFragment extends Fragment {
         getAllComics.enqueue(new Callback<ArrayList<Comics>>() {
             @Override
             public void onResponse(Call<ArrayList<Comics>> call, Response<ArrayList<Comics>> response) {
-                assert response.body() != null;
-                mainComicsAdapter.setData(response.body());
-                tempComics.addAll(response.body());
-                tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " комиксов");
+                if (response.isSuccessful()) {
+                    mainComicsAdapter.setData(response.body());
+                    tempComics.addAll(response.body());
+                    tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " " + getString(R.string.comics_one));
+                }
             }
 
             @Override
@@ -172,7 +175,7 @@ public class SearchFragment extends Fragment {
         });
 
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 3);
-        tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " комиксов");
+        tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " " + getString(R.string.comics_one));
 
         rvSearchComics.setLayoutManager(layoutManager);
         rvSearchComics.setAdapter(mainComicsAdapter);
@@ -181,21 +184,21 @@ public class SearchFragment extends Fragment {
 
     private void setDropdown() {
         itemList = new ArrayList<>(Arrays.asList(
-                "CHILDREN",
-                "FANTASTIC",
-                "HISTORICAL",
-                "ROMANTIC",
-                "DRAMA",
-                "ADVENTURES",
-                "ACTION",
-                "DAILY",
-                "COMEDY"
+                getString(R.string.genre_name_children),
+                getString(R.string.genre_name_fantastic),
+                getString(R.string.genre_name_historical),
+                getString(R.string.genre_name_romantic),
+                getString(R.string.genre_name_drama),
+                getString(R.string.genre_name_adventures),
+                getString(R.string.genre_name_action),
+                getString(R.string.genre_name_daily),
+                getString(R.string.genre_name_comedy)
         ));
 
         sortOptions = new ArrayList<>();
-        sortOptions.add("Все");
-        sortOptions.add("STUDIO");
-        sortOptions.add("AUTHOR");
+        sortOptions.add(getString(R.string.all));
+        sortOptions.add(getString(R.string.studio));
+        sortOptions.add(getString(R.string.authors));
 
         adapterFilter = new ArrayAdapter<>(requireActivity(), android.R.layout.simple_dropdown_item_1line, itemList);
         filterDropdown.setAdapter(adapterFilter);
@@ -264,8 +267,8 @@ public class SearchFragment extends Fragment {
                 String selectedSortOption = (String) parent.getItemAtPosition(position);
                 mainComicsAdapter.setData(tempComics);
                 mainComicsAdapter.notifyDataSetChanged();
-                if (selectedSortOption.equals("Все")) {
-                    tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " комиксов");
+                if (selectedSortOption.equals(getString(R.string.all))) {
+                    tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " " + getString(R.string.comics_one));
                 }
                 else
                     filterDataByType(selectedSortOption);
@@ -282,14 +285,14 @@ public class SearchFragment extends Fragment {
         if (selectedGenres.isEmpty()) {
             // No genres selected, show all comics
             mainComicsAdapter.setData(tempComics);
-            tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " комиксов");
+            tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " " + getString(R.string.comics_one));
         } else {
             Log.e("else", selectedGenres.toString());
             // Filter comics based on selected genres
             for (Comics comic : tempComics) {
                 boolean shouldAdd = true;
                 for (String selectedGenre : selectedGenres) {
-                    if (!comic.getGenres().contains(selectedGenre)) {
+                    if (!comic.getGenres().contains(getStringFromGenreName(selectedGenre))) {
                         shouldAdd = false;
                         break;
                     }
@@ -299,13 +302,17 @@ public class SearchFragment extends Fragment {
                 }
             }
             mainComicsAdapter.setData(filteredComics);
-            tvNumberOfComics.setText(filteredComics.size() + " комиксов");
+            tvNumberOfComics.setText(filteredComics.size() + " " + getString(R.string.comics_one));
         }
         mainComicsAdapter.notifyDataSetChanged();
     }
 
 
     public void filterDataByType(String query) {
+        if (query.equals(getString(R.string.studio)))
+            query = "STUDIO";
+        else
+            query = "AUTHOR";
         ArrayList<Comics> filteredData = new ArrayList<>();
         for (Comics comic : mainComicsAdapter.getData()) {
             if (comic.getType().equals(query)) {
@@ -313,8 +320,32 @@ public class SearchFragment extends Fragment {
             }
         }
         mainComicsAdapter.setData(filteredData);
-        tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " комиксов");
+        tvNumberOfComics.setText(mainComicsAdapter.getItemCount() + " " + getString(R.string.comics_one));
         mainComicsAdapter.notifyDataSetChanged();
+    }
+
+    private String getStringFromGenreName(String genreName) {
+        if (genreName.equals(getString(R.string.genre_name_children))) {
+            return "CHILDREN";
+        } else if (genreName.equals(getString(R.string.genre_name_fantastic))) {
+            return "FANTASTIC";
+        } else if (genreName.equals(getString(R.string.genre_name_historical))) {
+            return "HISTORICAL";
+        } else if (genreName.equals(getString(R.string.genre_name_romantic))) {
+            return "ROMANTIC";
+        } else if (genreName.equals(getString(R.string.genre_name_drama))) {
+            return "DRAMA";
+        } else if (genreName.equals(getString(R.string.genre_name_adventures))) {
+            return "ADVENTURES";
+        } else if (genreName.equals(getString(R.string.genre_name_action))) {
+            return "ACTION";
+        } else if (genreName.equals(getString(R.string.genre_name_daily))) {
+            return "DAILY";
+        } else if (genreName.equals(getString(R.string.genre_name_comedy))) {
+            return "COMEDY";
+        } else {
+            return genreName;
+        }
     }
 
 }

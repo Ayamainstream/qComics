@@ -30,4 +30,11 @@ public class Chapter {
         this.comicName = data;
     }
 
+    public String getComicName() {
+        return comicName;
+    }
+
+    public void setComicName(String comicName) {
+        this.comicName = comicName;
+    }
 }

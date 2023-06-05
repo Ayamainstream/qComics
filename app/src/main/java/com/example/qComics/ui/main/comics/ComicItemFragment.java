@@ -2,10 +2,12 @@ package com.example.qComics.ui.main.comics;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import android.app.Dialog;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Base64;
@@ -15,6 +17,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -27,6 +30,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.qComics.data.network.ApiClient;
 import com.example.qComics.data.network.comics.Chapter;
 import com.example.qComics.data.network.comics.Comics;
+import com.example.qComics.data.network.comics.Rating;
 import com.example.qComics.data.network.comics.SaveRequest;
 import com.example.qComics.ui.base.BaseActivity;
 import com.example.qComics.ui.main.adapters.ChapterAdapter;
@@ -37,6 +41,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior;
 import com.makeramen.roundedimageview.RoundedImageView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -48,13 +53,16 @@ public class ComicItemFragment extends Fragment {
     private FragmentComicItemBinding binding;
     private BottomSheetBehavior<View> mBottomSheetBehavior, sBottomSheetBehavior;
     FrameLayout bottomSheetInfo, bottomSheetShare;
-    TextView tvGenre, tvType, tvComicName, tvCreatorName, tvDescription, tvRating, tvPopularity, tvBottomDescription, tvBottomCreator;
+    TextView tvGenre, tvType, tvComicName, tvCreatorName, tvDescription, tvRating, tvPopularity,
+            tvBottomDescription, tvBottomCreator, rateBtn, rateDialogBtn, cancelDialogBtn;
     RoundedImageView cover;
     ImageView backBtn, downloadBtn, infoBtn, shareBtn, saveBtn;
     String comicsName, username;
     CoordinatorLayout mViewBg;
     RecyclerView rvChapters;
     Boolean saveStatus;
+    Dialog ratingDialog;
+    RatingBar ratingBarDialog;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -65,6 +73,7 @@ public class ComicItemFragment extends Fragment {
         tvCreatorName = binding.tvStudioName;
         tvDescription = binding.tvDescription;
         tvRating = binding.tvRating;
+        rateBtn = binding.rateBtn;
         tvPopularity = binding.tvPopularity;
         tvBottomDescription = binding.tvBottomDescription;
         tvBottomCreator = binding.tvBottomStudioName;
@@ -87,8 +96,10 @@ public class ComicItemFragment extends Fragment {
         comicsName = prefs.getString("comicsName", "");
         if (username == null) {
             saveBtn.setVisibility(View.GONE);
+            rateBtn.setVisibility(View.GONE);
         } else {
             saveBtn.setVisibility(View.VISIBLE);
+            rateBtn.setVisibility(View.VISIBLE);
         }
 
         backBtn.setOnClickListener(new View.OnClickListener() {
@@ -121,22 +132,93 @@ public class ComicItemFragment extends Fragment {
                 addToFavorites();
             }
         });
+        rateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ratingDialog.show();
+            }
+        });
+        downloadBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((BaseActivity) requireActivity()).addFragment(new DownloadFragment());
+            }
+        });
+        rateView();
         initView();
 
-        tvCreatorName.setOnClickListener(new View.OnClickListener() {
+        tvBottomCreator.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 SharedPreferences.Editor editor = getContext().getSharedPreferences("DeviceToken", MODE_PRIVATE).edit();
-                editor.putString("authorName", tvCreatorName.getText().toString()); // or add toString() after if needed
+                editor.putString("authorName", tvBottomCreator.getText().toString()); // or add toString() after if needed
                 editor.apply();
-                ((BaseActivity)requireActivity()).addFragment(new AuthorsProfileFragment());
+                ((BaseActivity) requireActivity()).addFragment(new AuthorsProfileFragment());
             }
         });
 
-        if (saveStatus) {
-            saveBtn.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_added));
-        }
         return binding.getRoot();
+    }
+
+    private void rateView() {
+        ratingDialog = new Dialog(requireActivity());
+        ratingDialog.setContentView(R.layout.dialog_rating);
+        ratingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        ratingBarDialog = ratingDialog.findViewById(R.id.ratingBar);
+        rateDialogBtn = ratingDialog.findViewById(R.id.rate_btn);
+        cancelDialogBtn = ratingDialog.findViewById(R.id.cancel_btn);
+
+        Call<Rating> getRating = ApiClient.getUserService().getRating(comicsName, username);
+        getRating.enqueue(new Callback<Rating>() {
+            @Override
+            public void onResponse(Call<Rating> call, Response<Rating> response) {
+                if (response.isSuccessful())
+                    ratingBarDialog.setRating(response.body().getRating().floatValue());
+            }
+
+            @Override
+            public void onFailure(Call<Rating> call, Throwable t) {
+
+            }
+        });
+
+        cancelDialogBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ratingDialog.dismiss();
+            }
+        });
+
+        rateDialogBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                sendRatingRequest();
+                ratingDialog.dismiss();
+            }
+        });
+    }
+
+    private void sendRatingRequest() {
+        Rating ratingRequest = new Rating();
+        ratingRequest.setRating((double) ratingBarDialog.getRating());
+        ratingRequest.setComicName(comicsName);
+        ratingRequest.setUsername(username);
+        Call<Rating> setRating = ApiClient.getUserService().setRating(ratingRequest);
+        setRating.enqueue(new Callback<Rating>() {
+            @Override
+            public void onResponse(Call<Rating> call, Response<Rating> response) {
+                if (response.isSuccessful()) {
+                    ratingBarDialog.setRating(response.body().getRating().floatValue());
+                    initView();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Rating> call, Throwable t) {
+
+            }
+        });
     }
 
     private void addToFavorites() {
@@ -200,17 +282,29 @@ public class ComicItemFragment extends Fragment {
             @Override
             public void onResponse(Call<Comics> call, Response<Comics> response) {
                 if (response.body() != null) {
-                    String commaSeparatedGenres = TextUtils.join(", ", response.body().getGenres());
+                    List<String> genres = response.body().getGenres();
+                    List<String> genreNames = new ArrayList<>();
+                    for (String genre : genres) {
+                        String genreName = getStringFromGenreName(genre);
+                        genreNames.add(genreName);
+                    }
+                    String commaSeparatedGenres = TextUtils.join(", ", genreNames);
                     tvGenre.setText(commaSeparatedGenres);
                     byte[] imageBytes = Base64.decode(response.body().getImageCoverBase64(), Base64.DEFAULT);
                     Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
                     cover.setImageBitmap(bitmap);
-                    tvType.setText(response.body().getType());
+                    if (response.body().getType().equals("STUDIO"))
+                        tvType.setText(getString(R.string.studio));
+                    else
+                        tvType.setText(getString(R.string.authors));
                     tvComicName.setText(response.body().getName());
                     tvCreatorName.setText(response.body().getAuthor());
                     tvDescription.setText(response.body().getDescription());
                     tvRating.setText(response.body().getRating().toString());
-                    tvPopularity.setText(String.valueOf(response.body().getVotes()));
+                    if (response.body().getVotes() == null)
+                        tvPopularity.setText("(0)");
+                    else
+                        tvPopularity.setText("(" + String.valueOf(response.body().getVotes()) + ")");
                     tvBottomDescription.setText(response.body().getDescription());
                     tvBottomCreator.setText(response.body().getAuthor());
                 }
@@ -241,17 +335,63 @@ public class ComicItemFragment extends Fragment {
         rvChapters.setLayoutManager(layoutManager);
         rvChapters.setAdapter(chapterAdapter);
 
-        Call<Boolean> getStatus = ApiClient.getUserService().getFavoriteStatus(username, comicsName);
-        getStatus.enqueue(new Callback<Boolean>() {
+        Call<ArrayList<Comics>> getFavorites = ApiClient.getUserService().getFavorites(username);
+        getFavorites.enqueue(new Callback<ArrayList<Comics>>() {
             @Override
-            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
-                saveStatus = response.body();
+            public void onResponse(Call<ArrayList<Comics>> call, Response<ArrayList<Comics>> response) {
+                if (response.isSuccessful()) {
+                    for (Comics comic : response.body()) {
+                        saveStatus = comic.getName().equals(comicsName);
+                        if (saveStatus) {
+                            saveBtn.setImageDrawable(ContextCompat.getDrawable(requireActivity(), R.drawable.ic_added));
+                            saveBtn.setEnabled(false);
+                        }
+                        Log.e("ASD", saveStatus.toString());
+                    }
+                }
             }
 
             @Override
-            public void onFailure(Call<Boolean> call, Throwable t) {
+            public void onFailure(Call<ArrayList<Comics>> call, Throwable t) {
 
             }
         });
+//        Call<Boolean> getStatus = ApiClient.getUserService().getFavoriteStatus(username, comicsName);
+//        getStatus.enqueue(new Callback<Boolean>() {
+//            @Override
+//            public void onResponse(Call<Boolean> call, Response<Boolean> response) {
+//                saveStatus = response.body();
+//            }
+//
+//            @Override
+//            public void onFailure(Call<Boolean> call, Throwable t) {
+//
+//            }
+//        });
+    }
+
+    private String getStringFromGenreName(String genreName) {
+        switch (genreName) {
+            case "CHILDREN":
+                return getString(R.string.genre_name_children);
+            case "FANTASTIC":
+                return getString(R.string.genre_name_fantastic);
+            case "HISTORICAL":
+                return getString(R.string.genre_name_historical);
+            case "ROMANTIC":
+                return getString(R.string.genre_name_romantic);
+            case "DRAMA":
+                return getString(R.string.genre_name_drama);
+            case "ADVENTURES":
+                return getString(R.string.genre_name_adventures);
+            case "ACTION":
+                return getString(R.string.genre_name_action);
+            case "DAILY":
+                return getString(R.string.genre_name_daily);
+            case "COMEDY":
+                return getString(R.string.genre_name_comedy);
+            default:
+                return genreName;
+        }
     }
 }

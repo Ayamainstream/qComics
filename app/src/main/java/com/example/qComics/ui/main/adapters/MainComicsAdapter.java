@@ -2,6 +2,8 @@ package com.example.qComics.ui.main.adapters;
 
 import static android.content.Context.MODE_PRIVATE;
 
+import static com.example.qComics.data.utils.Utils.getString;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -128,9 +130,15 @@ public class MainComicsAdapter extends RecyclerView.Adapter<MainComicsAdapter.Vi
             Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
             cover.setImageBitmap(bitmap);
             tvNameOfComics.setText(data.getName());
-            tvTypesOfComics.setText(data.getType());
+            if (data.getType().equals("STUDIO"))
+                tvTypesOfComics.setText(getString(R.string.studio, context));
+            else
+                tvTypesOfComics.setText(getString(R.string.authors, context));
             tvRating.setText(String.valueOf(data.getRating()));
-            tvVotes.setText("("+String.valueOf(data.getVotes())+")");
+            if (data.getVotes() == null)
+                tvVotes.setText("(0)");
+            else
+                tvVotes.setText("("+String.valueOf(data.getVotes())+")");
         }
     }
 }

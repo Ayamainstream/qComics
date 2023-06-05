@@ -154,19 +154,19 @@
                         android:textColor="@color/black"
                         android:textSize="12sp" />
 
-                    <ImageView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="8dp"
-                        android:src="@drawable/ic_subscribed" />
+<!--                    <ImageView-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:layout_marginStart="8dp"-->
+<!--                        android:src="@drawable/ic_subscribed" />-->
 
-                    <TextView
-                        android:id="@+id/tv_subscribed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="424"
-                        android:textColor="@color/black"
-                        android:textSize="12sp" />
+<!--                    <TextView-->
+<!--                        android:id="@+id/tv_subscribed"-->
+<!--                        android:layout_width="wrap_content"-->
+<!--                        android:layout_height="wrap_content"-->
+<!--                        android:text="424"-->
+<!--                        android:textColor="@color/black"-->
+<!--                        android:textSize="12sp" />-->
 
                     <ImageView
                         android:layout_width="wrap_content"
@@ -182,6 +182,7 @@
                         android:textSize="12sp" />
 
                     <TextView
+                        android:id="@+id/rate_btn"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_margin="5dp"
@@ -193,6 +194,7 @@
                         android:text="@string/rate"
                         android:textColor="@color/black"
                         android:textSize="11sp" />
+
                 </LinearLayout>
             </LinearLayout>
 
